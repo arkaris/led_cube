@@ -6,14 +6,14 @@ void setPin(uint8_t pin, uint8_t x) {
 }
 
 void renderCube() {
-  for (uint8_t i = 0; i < 8; i++) {
+  for (uint8_t layer = 0; layer < 8; layer++) {
     setPin(SS, LOW);
-    SPI.transfer(0x01 << i);
-    for (uint8_t j = 0; j < 8; j++) {
-      SPI.transfer(cube[i][j]);
+    SPI.transfer(0x01 << layer);
+    for (uint8_t row = 0; row < 8; row++) {
+      SPI.transfer(cube[layer][row]);
     }
     setPin(SS, HIGH);
-    delayMicroseconds(1000);
+    delayMicroseconds(RENDER_DELAY);
   }
   setPin(SS, LOW);
   for (uint8_t i = 0; i < 9; i++) {

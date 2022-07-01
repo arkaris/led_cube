@@ -1,7 +1,13 @@
+#define TRAV_FRAMES_MIN 2
+#define TRAV_FRAMES_MAX 40
+#define TRAV_FRAMES_DELTA 5
+
+#define RENDER_DELAY 100
+#define GREY_LEVEL 16
+
 typedef struct {
-  uint8_t pos;
+  float pos;
   int8_t vel;
-  uint8_t frame;
 } t_travAxis;
 
 typedef struct {
@@ -9,6 +15,3 @@ typedef struct {
   t_travAxis axisy;
   t_travAxis axisz;
 } t_travCube;
-
-#define TRAV_FRAMES_MIN 1
-#define TRAV_FRAMES_MAX 50
