@@ -2,8 +2,8 @@
 #define TRAV_FRAMES_MAX 40
 #define TRAV_FRAMES_DELTA 5
 
-#define RENDER_DELAY 100
-#define GREY_LEVEL 16
+#define RENDER_DELAY 800
+#define GREY_LEVEL 8
 
 typedef struct {
   float pos;

@@ -1,9 +1,9 @@
+// run floating cube animation
 void runFloatingCube() {
   t_travCube travCube = {
-    {3.5, (int8_t)random(TRAV_FRAMES_MIN, TRAV_FRAMES_MAX + 1)},
-    {0.8, (int8_t)random(TRAV_FRAMES_MIN, TRAV_FRAMES_MAX + 1)},
-    {6.5, (int8_t)random(TRAV_FRAMES_MIN, TRAV_FRAMES_MAX + 1)}
-  };
+      {3.5, (int8_t)random(TRAV_FRAMES_MIN, TRAV_FRAMES_MAX + 1)},
+      {0.8, (int8_t)random(TRAV_FRAMES_MIN, TRAV_FRAMES_MAX + 1)},
+      {6.5, (int8_t)random(TRAV_FRAMES_MIN, TRAV_FRAMES_MAX + 1)}};
 
   while (true) {
     renderFloatingFrame(travCube);
@@ -11,6 +11,7 @@ void runFloatingCube() {
   }
 }
 
+// render cube with grey level
 void renderFloatingFrame(t_travCube travCube) {
   for (uint8_t grey = 0; grey < GREY_LEVEL; grey++) {
     
@@ -24,12 +25,10 @@ void renderFloatingFrame(t_travCube travCube) {
   }
 }
 
-uint8_t calcBrightness(float br, uint8_t grey) {
-  if (br < 0.05) return 0;
-  if (br < 0.1) return (br - 0.05) * GREY_LEVEL > grey;
-  else if (br < 0.4) return (br * 28 -2.75) * GREY_LEVEL > grey;
-  else if (br < 0.5) return (br + 0.5) * GREY_LEVEL > grey;
-  else return 1;
+bool calcBrightness(float br, uint8_t grey) {
+  if (br < 0.05) return false;
+  else if (br < 0.5) return 2 * br * GREY_LEVEL > grey;
+  else return true;
 }
 
 void renderFloatingCube(t_travCube travCube, uint8_t grey) {
@@ -67,7 +66,28 @@ void renderFloatingCube(t_travCube travCube, uint8_t grey) {
   if (zfloor < 7) cube[zfloor + 1][yfloor] = line10;
   if (yfloor < 7 && zfloor < 7) cube[zfloor + 1][yfloor + 1] = line11;
 
-  renderCube();
+  if (zfloor == 7) zfloor = 6;
+  renderFloatingPoint(zfloor);
+}
+
+void renderFloatingPoint(uint8_t dataLayer) {
+  for (uint8_t layer = dataLayer; layer < dataLayer + 2; layer++) {
+    // set layer
+    setPin(SS, LOW);
+    SPI.transfer(0x01 << layer);
+    for (uint8_t row = 0; row < 8; row++) {
+      SPI.transfer(cube[layer][row]);
+    }
+    setPin(SS, HIGH);
+    // lights layer
+    delayMicroseconds(RENDER_DELAY);
+  }
+  // reset lights
+  setPin(SS, LOW);
+  for (uint8_t i = 0; i < 9; i++) {
+    SPI.transfer(0x00);
+  }
+  setPin(SS, HIGH);
 }
 
 void moveFloatingCube(t_travCube& travCube) {
